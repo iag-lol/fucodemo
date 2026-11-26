@@ -21,7 +21,11 @@ if (hero) {
   // intento: se declara autoplay y se reintenta cuando el video ya puede verse.
   video.muted = video.defaultMuted = true;
   if (autoplay) { video.autoplay = true; video.preload = 'auto'; }
-  video.src = innerWidth < 760 ? video.dataset.sd : innerWidth * Math.min(devicePixelRatio, 1.5) > 2200 ? video.dataset.hd : video.dataset.md;
+  // El encuadre a pantalla completa amplía también el video en celulares verticales.
+  // 1080p evita ampliar las versiones de 360p y 720p; el ahorro de datos usa 720p.
+  video.src = saveData
+    ? video.dataset.md || video.dataset.hd || video.dataset.sd
+    : video.dataset.hd || video.dataset.md || video.dataset.sd;
   const start = () => { if (autoplay && visible && video.paused) video.play().catch(() => {}); };
   for (const ev of ['loadeddata', 'canplay']) video.addEventListener(ev, start);
   for (const ms of [0, 700, 1800, 3500]) setTimeout(start, ms);
