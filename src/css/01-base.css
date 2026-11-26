@@ -115,7 +115,7 @@ h1 em, h2 em, .ftr__big em, .manifesto em { font-family: var(--serif); font-styl
 .ftr__base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; padding-block: 26px 96px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--muted); }
 .ftr__base .link { font: inherit; }
 .ftr__credit { flex-basis: 100%; margin-top: 16px; text-align: center; font-size: 14px; letter-spacing: 0; }
-.ftr__credit strong { color: var(--text); }
+.ftr__credit strong { color: var(--paper); }
 .ftr__credit:hover strong { text-decoration: underline; text-underline-offset: 4px; }
 
 .wa { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 70; width: 54px; height: 54px; border-radius: 50%; background: #1fae54; color: #fff; display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0, 0, 0, .45); transition: transform .35s var(--ease); }

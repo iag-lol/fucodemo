@@ -1,4 +1,5 @@
 import { site } from '../data/site.mjs';
+import { developer, websiteCredits } from '../data/developer.mjs';
 import { ctx, esc, icons, src, STATIC } from './helpers.mjs';
 
 export function layout(lang, { path, page, title, description, body, image, jsonld = [], noindex = false, scripts = [], footer = true }) {
@@ -32,6 +33,7 @@ export function layout(lang, { path, page, title, description, body, image, json
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(desc)}">
+<meta name="generator" content="${esc(developer.name)} — desarrollo web">
 ${noindex ? '<meta name="robots" content="noindex,nofollow">' : `<link rel="canonical" href="${site.url}${url(path)}">
 <link rel="alternate" hreflang="es" href="${site.url}${path}">
 <link rel="alternate" hreflang="en" href="${site.url}/en${path}">
@@ -51,7 +53,7 @@ ${noindex ? '<meta name="robots" content="noindex,nofollow">' : `<link rel="cano
 <link rel="preload" href="/fonts/serif-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/main.css?v=__V__">
 <script src="/js/boot.js?v=__V__"></script>
-${[org, ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
+${[org, websiteCredits(site, lang), ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head>
 <body data-page="${page}">
 <a class="skip" href="#main">${t('Saltar al contenido', 'Skip to content')}</a>
@@ -107,7 +109,7 @@ ${footer ? `<footer class="ftr">
     <a href="${site.instagram}" target="_blank" rel="noopener">Instagram</a>
     <a href="${url('/privacidad/')}">${t('Privacidad', 'Privacy')}</a>
     <button class="link" data-top>${t('Volver arriba', 'Back to top')} ↑</button>
-    <a class="ftr__credit" href="https://www.zyteron.cl/" target="_blank" rel="noopener">${t('Web desarrollada con', 'Website developed with')} <span role="img" aria-label="${t('amor', 'love')}">❤️</span> ${t('por', 'by')} <strong>Zyteron</strong></a>
+    <a class="ftr__credit" href="${developer.url}" target="_blank" rel="noopener">${t('Web desarrollada con', 'Website developed with')} <span role="img" aria-label="${t('amor', 'love')}">❤️</span> ${t('por', 'by')} <strong>${developer.name}</strong></a>
   </div>
 </footer>` : ''}
 <a class="wa" href="https://wa.me/${site.whatsapp}?text=${encodeURIComponent(t('Hola FUCO, quiero cotizar un proyecto.', 'Hi FUCO, I would like a quote for a project.'))}" target="_blank" rel="noopener" aria-label="WhatsApp">${icons.whatsapp}</a>
