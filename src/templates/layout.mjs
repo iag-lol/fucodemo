@@ -107,6 +107,7 @@ ${footer ? `<footer class="ftr">
     <a href="${site.instagram}" target="_blank" rel="noopener">Instagram</a>
     <a href="${url('/privacidad/')}">${t('Privacidad', 'Privacy')}</a>
     <button class="link" data-top>${t('Volver arriba', 'Back to top')} ↑</button>
+    <a class="ftr__credit" href="https://www.zyteron.cl/" target="_blank" rel="noopener">${t('Web desarrollada con', 'Website developed with')} <span role="img" aria-label="${t('amor', 'love')}">❤️</span> ${t('por', 'by')} <strong>Zyteron</strong></a>
   </div>
 </footer>` : ''}
 <a class="wa" href="https://wa.me/${site.whatsapp}?text=${encodeURIComponent(t('Hola FUCO, quiero cotizar un proyecto.', 'Hi FUCO, I would like a quote for a project.'))}" target="_blank" rel="noopener" aria-label="WhatsApp">${icons.whatsapp}</a>
