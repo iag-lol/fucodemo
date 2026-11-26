@@ -1,0 +1,7 @@
+node_modules/
+/dist/
+/data/
+public/media/
+media-originals/
+.env
+.DS_Store
