@@ -22,16 +22,16 @@ if (pre && !document.documentElement.classList.contains('seen')) {
     if (opened) return;
     opened = true;
     pre.classList.add('is-open');
-    try { sessionStorage.setItem('fuco:seen', '1'); } catch { /* sin almacenamiento */ }
-    setTimeout(() => pre.remove(), 1300);
+    try { sessionStorage.setItem('fuco:intro:v2', '1'); } catch { /* sin almacenamiento */ }
+    setTimeout(() => pre.remove(), 1600);
   };
   const tick = (now) => {
-    const p = clamp((now - start) / 1300, 0, 1);
+    const p = clamp((now - start) / 2200, 0, 1);
     count.textContent = String(Math.round(100 * (1 - (1 - p) ** 3))).padStart(3, '0');
-    if (p < 1) requestAnimationFrame(tick); else openIris();
+    if (p < 1) requestAnimationFrame(tick); else setTimeout(openIris, 180);
   };
   requestAnimationFrame(tick);
-  setTimeout(openIris, 2600); // respaldo si la pestaña está en segundo plano
+  setTimeout(openIris, 3400); // respaldo si la pestaña está en segundo plano
 }
 
 /* Desplazamiento suave */

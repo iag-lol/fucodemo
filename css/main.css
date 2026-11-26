@@ -134,7 +134,14 @@ h1 em, h2 em, .ftr__big em, .manifesto em { font-family: var(--serif); font-styl
 @keyframes preloader-failsafe { to { visibility: hidden; } }
 .no-js .preloader, .seen .preloader { display: none; }
 .preloader__iris { position: absolute; left: 50%; top: 50%; }
-.preloader__iris span { position: absolute; left: 0; top: 0; width: 160vmax; height: 160vmax; background: var(--ink); border-top: 1px solid rgba(241, 237, 228, .16); transform-origin: 0 0; transform: rotate(calc(var(--i) * 45deg)) translate(-1px, -1px) skewY(45.4deg); transition: transform 1.1s cubic-bezier(.7, 0, .2, 1); }
+.preloader__lens { position: absolute; width: clamp(190px, 38vw, 300px); aspect-ratio: 1; border-radius: 50%; border: 1px solid rgba(241, 237, 228, .35); background: repeating-radial-gradient(circle, transparent 0 9px, rgba(241, 237, 228, .08) 10px 11px), radial-gradient(circle, #0a0a0b 34%, #1b2426 48%, #0a0a0b 61%, #303033 63%, #121214 68%); box-shadow: 0 0 0 8px #121214, 0 0 0 9px rgba(241, 237, 228, .12), inset 0 0 35px #000; transition: opacity .3s, transform 1.35s var(--ease); }
+.preloader__lens::after { content: ''; position: absolute; inset: 15%; border: 1px dashed rgba(241, 237, 228, .25); border-radius: 50%; animation: lens-focus 2.2s var(--ease) both; }
+@keyframes lens-focus { from { transform: rotate(-35deg) scale(1.08); opacity: .25; } to { transform: rotate(25deg) scale(1); opacity: .8; } }
+.preloader::after { content: ''; position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.preloader.is-open::after { animation: shutter-flash .28s ease-out both; }
+@keyframes shutter-flash { 0% { opacity: 0; } 18% { opacity: .55; } 100% { opacity: 0; } }
+.preloader.is-open .preloader__lens { opacity: 0; transform: scale(1.25); }
+.preloader__iris span { position: absolute; left: 0; top: 0; width: 160vmax; height: 160vmax; background: var(--ink); border-top: 1px solid rgba(241, 237, 228, .16); transform-origin: 0 0; transform: rotate(calc(var(--i) * 45deg)) translate(-1px, -1px) skewY(45.4deg); transition: transform 1.35s cubic-bezier(.7, 0, .2, 1); }
 .preloader.is-open .preloader__iris span { transform: rotate(calc(var(--i) * 45deg + 18deg)) translate(110vmax, 25vmax) skewY(45.4deg); }
 .preloader img, .preloader__count { position: relative; transition: opacity .35s, transform .6s var(--ease); }
 .preloader img { animation: breathe 1.6s ease-in-out infinite alternate; }

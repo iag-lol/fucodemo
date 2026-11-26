@@ -59,6 +59,7 @@ ${[org, websiteCredits(site, lang), ...jsonld].map((j) => `<script type="applica
 <a class="skip" href="#main">${t('Saltar al contenido', 'Skip to content')}</a>
 ${page === 'home' ? `<div class="preloader" aria-hidden="true">
   <div class="preloader__iris">${Array.from({ length: 8 }, (_, i) => `<span style="--i:${i}"></span>`).join('')}</div>
+  <div class="preloader__lens"></div>
   <img src="/media/brand/logo-fuco.png" alt="" width="90" height="90">
   <div class="preloader__count"><span data-count>000</span><small>${t('cargando', 'loading')}</small></div>
 </div>` : ''}
