@@ -41,8 +41,8 @@ export function home(lang) {
   <div class="hero__content wrap">
     <p class="eyebrow">${L({ es: 'Estudio de fotografía y video — Santiago, Chile', en: 'Photography & video studio — Santiago, Chile' })}</p>
     <h1 class="hero__title">
-      <span class="line"><span>${t('Imágenes', 'Images')}</span></span>
-      <span class="line"><span><em>${t('que se sienten', 'you can feel')}</em></span></span>
+      <span class="line"><span>${t('Fotografía', 'Photography')}</span></span>
+      <span class="line"><span><em>${t('y video', '& video')}</em></span></span>
     </h1>
     <div class="hero__cta">
       <a class="btn btn--solid" href="${url('/proyectos/')}" data-magnetic>${t('Ver proyectos', 'View work')} ${icons.arrow}</a>
