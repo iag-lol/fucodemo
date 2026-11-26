@@ -96,5 +96,20 @@ Necesitas un hosting que ejecute Node (VPS, Render, Railway, Fly.io…):
 4. `npm install && npm run build && npm start`, siempre con HTTPS.
 5. Cambia el DNS del dominio. Las direcciones antiguas (`/about`, `/estudio`, `/clients`, `/contact`) ya redirigen.
 
-Un hosting solo estático (Netlify, Cloudflare Pages) puede servir `dist/`, pero los formularios,
-las galerías y el panel dejarían de funcionar.
+### Versión estática (opcional, con funciones recortadas)
+
+`STATIC=1 npm run build` genera en `dist/` una versión para un hosting sin servidor (Static Site de Render,
+GitHub Pages, Netlify…). En una subcarpeta, agrega `BASE_PATH`: `BASE_PATH=/mi-repo npm run build`.
+
+- Se mantienen el diseño, las animaciones, los videos y las herramientas del navegador.
+- El contacto y el cotizador preparan el mensaje para enviarlo por WhatsApp o correo.
+- **No incluye** galerías privadas, panel, registro de solicitudes, bloqueo de fechas ni tarifas.
+
+Sin esas variables se genera la versión completa, que necesita `npm start`.
+
+## GitHub Pages
+
+Publicado en https://iag-lol.github.io/fucodemo/ desde la raíz de `main`.
+Para actualizar: `npm ci`, `node scripts/publish-pages.mjs`, confirmar los archivos generados y subir `main`. Los archivos `data/site.es.json` y `data/site.en.json` requieren `git add -f` porque `data/` también almacena información privada del servidor. No agregar otros archivos de esa carpeta.
+
+La versión de Pages conserva los enlaces canónicos del dominio comercial. No incluye panel ni galerías privadas; los formularios preparan el envío por WhatsApp o correo.

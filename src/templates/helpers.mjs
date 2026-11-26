@@ -1,6 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { projects, categories } from '../data/projects.mjs';
 
+/** Subcarpeta donde se publica (p. ej. '/mi-repo' en GitHub Pages); vacía si es la raíz del dominio. */
+export const BASE = (process.env.BASE_PATH ?? '').replace(/^\/+|\/+$/g, '').replace(/^(?=.)/, '/');
+/** Sitio estático (GitHub Pages, Static Site de Render…): sin API, galerías de clientes ni panel. */
+export const STATIC = process.env.STATIC === '1' || BASE !== '';
+
 export const media = JSON.parse(readFileSync(new URL('../data/media.json', import.meta.url)));
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);

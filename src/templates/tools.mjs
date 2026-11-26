@@ -1,6 +1,6 @@
 import { layout } from './layout.mjs';
-import { ctx, src, icons } from './helpers.mjs';
-import { pageHead } from './components.mjs';
+import { ctx, src, icons, STATIC } from './helpers.mjs';
+import { pageHead, handOffDone } from './components.mjs';
 import { services, quoteOptions } from '../data/content.mjs';
 import { site } from '../data/site.mjs';
 
@@ -69,7 +69,9 @@ export function quotePage(lang) {
   const opt = (name, o, type = 'checkbox', extra = '') => `<label class="opt">${extra}<input type="${type}" name="${name}" value="${o.id}" data-label="${o[lang]}"><span>${o[lang]}</span></label>`;
   const steps = [t('Servicios', 'Services'), t('Detalles', 'Details'), t('Fecha', 'Date'), t('Tus datos', 'Your details')];
   const body = `
-${pageHead(t('Cotizador', 'Quote builder'), t('Arma <em>tu producción</em>', 'Build <em>your production</em>'), t('Cuatro pasos. Al final recibimos tu brief completo y te enviamos una propuesta.', 'Four steps. We receive your full brief and send you a proposal.'))}
+${pageHead(t('Cotizador', 'Quote builder'), t('Arma <em>tu producción</em>', 'Build <em>your production</em>'), STATIC
+  ? t('Cuatro pasos. Al final nos envías tu brief completo por WhatsApp o correo y te preparamos una propuesta.', 'Four steps. At the end you send us your full brief by WhatsApp or email and we prepare a proposal.')
+  : t('Cuatro pasos. Al final recibimos tu brief completo y te enviamos una propuesta.', 'Four steps. We receive your full brief and send you a proposal.'))}
 <section class="quote wrap" data-quote>
   <form class="quote__form" novalidate>
     <ol class="quote__steps">${steps.map((s, i) => `<li><button type="button" data-goto="${i}"${i === 0 ? ' aria-current="step"' : ''}><b>${i + 1}</b>${s}</button></li>`).join('')}</ol>
@@ -102,7 +104,7 @@ ${pageHead(t('Cotizador', 'Quote builder'), t('Arma <em>tu producción</em>', 'B
       </div>
     </fieldset>
     <p class="form__error" role="alert" hidden></p>
-    <div class="quote__nav"><button type="button" class="btn" data-back hidden>← ${t('Atrás', 'Back')}</button><button type="button" class="btn btn--solid" data-next>${t('Continuar', 'Continue')} →</button><button type="submit" class="btn btn--solid" data-send hidden>${t('Enviar solicitud', 'Send request')} ${icons.arrow}</button></div>
+    <div class="quote__nav"><button type="button" class="btn" data-back hidden>← ${t('Atrás', 'Back')}</button><button type="button" class="btn btn--solid" data-next>${t('Continuar', 'Continue')} →</button><button type="submit" class="btn btn--solid" data-send hidden>${STATIC ? t('Preparar envío', 'Prepare message') : t('Enviar solicitud', 'Send request')} ${icons.arrow}</button></div>
   </form>
   <aside class="slate" aria-live="polite">
     <div class="slate__clap"><i></i></div>
@@ -112,7 +114,7 @@ ${pageHead(t('Cotizador', 'Quote builder'), t('Arma <em>tu producción</em>', 'B
     <p class="slate__price" data-price hidden></p>
     <a class="btn btn--sm" data-wa target="_blank" rel="noopener" href="https://wa.me/${site.whatsapp}">${icons.whatsapp} ${t('Enviar por WhatsApp', 'Send via WhatsApp')}</a>
   </aside>
-  <div class="form__done" data-done hidden><i>✓</i><h2>${t('¡Corte! Solicitud recibida', 'Cut! Request received')}</h2><p>${t('Tu número de referencia es', 'Your reference number is')} <b data-ref></b>. ${t('Te escribiremos a', 'We will write to')} <b data-ref-email></b>.</p><a class="btn" href="${url('/proyectos/')}">${t('Seguir mirando proyectos', 'Keep browsing')}</a></div>
+  ${STATIC ? handOffDone(c) : `<div class="form__done" data-done hidden><i>✓</i><h2>${t('¡Corte! Solicitud recibida', 'Cut! Request received')}</h2><p>${t('Tu número de referencia es', 'Your reference number is')} <b data-ref></b>. ${t('Te escribiremos a', 'We will write to')} <b data-ref-email></b>.</p><a class="btn" href="${url('/proyectos/')}">${t('Seguir mirando proyectos', 'Keep browsing')}</a></div>`}
 </section>`;
   return layout(lang, { path: '/cotizar/', page: 'quote', title: t('Cotizar', 'Get a quote'), body, scripts: ['quote'] });
 }

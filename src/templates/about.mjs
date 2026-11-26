@@ -1,5 +1,5 @@
 import { layout } from './layout.mjs';
-import { ctx, esc, img, icons, resolvedProjects } from './helpers.mjs';
+import { ctx, esc, img, icons, resolvedProjects, STATIC } from './helpers.mjs';
 import { pageHead, timeline, marquee } from './components.mjs';
 import { processSteps } from '../data/content.mjs';
 import { crew, phases, gear, standards } from '../data/nosotros.mjs';
@@ -103,7 +103,7 @@ ${pageHead(t('Nosotros', 'About us'), t('El equipo <em>detrás de cada plano</em
 
 <section class="std wrap" id="profesionalidad">
   ${head(t('Profesionalidad', 'Standards'), t('Cómo cuidamos', 'How we look after'), t('tu proyecto', 'your project'))}
-  <div class="std__grid">${standards.map((s) => `<article class="std__card" data-reveal data-tilt>${icon(s.icon)}<h3>${L(s.title)}</h3><p>${L(s.text)}</p>${pend(s.ok)}</article>`).join('')}</div>
+  <div class="std__grid">${standards.filter((s) => !(STATIC && s.icon === 'gallery')).map((s) => `<article class="std__card" data-reveal data-tilt>${icon(s.icon)}<h3>${L(s.title)}</h3><p>${L(s.text)}</p>${pend(s.ok)}</article>`).join('')}</div>
   <div class="std__cta" data-reveal><p>${t('¿Necesitas saber algo más antes de contratarnos?', 'Need to know anything else before hiring us?')}</p>
     <a class="btn btn--solid" href="${url('/cotizar/')}">${t('Cotizar un proyecto', 'Get a quote')} ${icons.arrow}</a>
     <a class="btn" href="${url('/contacto/')}">${t('Preguntar', 'Ask us')}</a></div>

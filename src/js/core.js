@@ -1,5 +1,5 @@
 // Comportamiento común a todas las páginas.
-import { $, $$, t, reduced, fine, saveData, clamp, scroll, lock, copy, toast } from './lib/util.js';
+import { $, $$, t, reduced, fine, saveData, clamp, scroll, lock, copy, toast, base } from './lib/util.js';
 import { createPlayer } from './lib/player.js';
 import { lightbox } from './lib/lightbox.js';
 import { mood, openMood } from './lib/mood.js';
@@ -291,4 +291,4 @@ if (shared) $$('a[data-lightbox]')[shared[1] - 1]?.click();
 
 // Recalcular cuando cargan las fuentes e imágenes
 addEventListener('load', () => ScrollTrigger?.refresh());
-if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(() => {});
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register(`${base}/sw.js`).catch(() => {});

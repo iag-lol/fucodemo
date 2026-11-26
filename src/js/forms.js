@@ -1,6 +1,6 @@
 // Formulario de contacto.
 import { $, t, lang } from './lib/util.js';
-import { validate, showError, sendLead } from './lib/forms.js';
+import { validate, showError, sendLead, finish } from './lib/forms.js';
 
 const form = $('[data-lead-form]');
 const done = $('[data-done]');
@@ -14,10 +14,8 @@ form.addEventListener('submit', async (e) => {
   const data = Object.fromEntries(new FormData(form));
   try {
     const res = await sendLead({ ...data, type: form.dataset.leadForm, consent: true, lang });
-    form.hidden = true;
-    done.hidden = false;
-    $('[data-ref]', done).textContent = res.ref;
-    done.scrollIntoView({ block: 'center' });
+    if (res) $('[data-ref]', done).textContent = res.ref;
+    finish(done, [form]);
   } catch (err) {
     showError(error, err.message);
   } finally {

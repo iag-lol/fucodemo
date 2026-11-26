@@ -1,4 +1,5 @@
 import { esc, img, src, icons, media, bySlug } from './helpers.mjs';
+import { site } from '../data/site.mjs';
 import { brands } from '../data/brands.mjs';
 import { readFileSync } from 'node:fs';
 
@@ -119,4 +120,13 @@ export function compare(c, name) {
   <i class="compare__line" aria-hidden="true"><b>⟷</b></i>
   <input type="range" min="0" max="100" value="50" aria-label="${c.t('Comparar antes y después', 'Compare before and after')}">
 </div>`;
+}
+
+/** Cierre de los formularios en el sitio estático: el visitante envía el mensaje desde su WhatsApp o correo. */
+export function handOffDone({ t }) {
+  return `<div class="form__done" data-done hidden><i>↗</i><h2>${t('Falta un paso', 'One more step')}</h2>
+  <p>${t('Preparamos tu mensaje. Envíalo desde WhatsApp o desde tu correo para que nos llegue.', 'Your message is ready. Send it from WhatsApp or your email so it reaches us.')}</p>
+  <div class="form__send"><a class="btn btn--solid" data-send-wa href="https://wa.me/${site.whatsapp}" target="_blank" rel="noopener">${icons.whatsapp} ${t('Abrir WhatsApp', 'Open WhatsApp')}</a>
+  <a class="btn" data-send-mail href="mailto:${site.email}">${t('Enviar por correo', 'Send by email')}</a></div>
+  <button type="button" class="link" data-edit>${t('Volver al formulario', 'Back to the form')}</button></div>`;
 }

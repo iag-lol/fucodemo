@@ -1,5 +1,5 @@
 import { site } from '../data/site.mjs';
-import { ctx, esc, icons, src } from './helpers.mjs';
+import { ctx, esc, icons, src, STATIC } from './helpers.mjs';
 
 export function layout(lang, { path, page, title, description, body, image, jsonld = [], noindex = false, scripts = [], footer = true }) {
   const c = ctx(lang);
@@ -15,6 +15,7 @@ export function layout(lang, { path, page, title, description, body, image, json
     ['/lab/', 'Lab'],
     ['/contacto/', t('Contacto', 'Contact')],
   ];
+  const access = STATIC ? [] : [['/clientes/', t('Acceso clientes', 'Client access')]];
   const cur = (href) => (path.startsWith(href) ? ' aria-current="page"' : '');
   const otherLang = lang === 'es' ? `/en${path}` : path;
   const org = {
@@ -25,7 +26,7 @@ export function layout(lang, { path, page, title, description, body, image, json
   };
 
   return `<!doctype html>
-<html lang="${lang}" class="no-js">
+<html lang="${lang}" class="no-js"${STATIC ? ' data-static' : ''}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -77,7 +78,7 @@ ${page === 'home' ? `<div class="preloader" aria-hidden="true">
 </header>
 <div class="menu" id="menu" inert>
   <nav aria-label="${t('Menú móvil', 'Mobile menu')}">
-    ${[...nav, ['/cotizar/', t('Cotizar', 'Get a quote')], ['/clientes/', t('Acceso clientes', 'Client access')]].map(([h, l], i) => `<a href="${url(h)}" style="--i:${i}"${cur(h)}><small>0${i + 1}</small>${l}</a>`).join('')}
+    ${[...nav, ['/cotizar/', t('Cotizar', 'Get a quote')], ...access].map(([h, l], i) => `<a href="${url(h)}" style="--i:${i}"${cur(h)}><small>0${i + 1}</small>${l}</a>`).join('')}
   </nav>
   <p><a href="mailto:${site.email}">${site.email}</a> · <a href="${site.instagram}" target="_blank" rel="noopener">${site.instagramHandle}</a></p>
 </div>
@@ -97,7 +98,7 @@ ${footer ? `<footer class="ftr">
     ${site.team.map((m) => `<div><h2>${m.name}</h2><a href="mailto:${m.email}">${m.email}</a><a href="tel:${m.phone.replace(/\s/g, '')}">${m.phone}</a></div>`).join('')}
     <div><h2>${t('Explorar', 'Explore')}</h2>
       ${nav.slice(0, 5).map(([h, l]) => `<a href="${url(h)}">${l}</a>`).join('')}
-      <a href="${url('/clientes/')}">${t('Acceso clientes', 'Client access')}</a></div>
+      ${access.map(([h, l]) => `<a href="${url(h)}">${l}</a>`).join('')}</div>
   </div>
   <div class="ftr__word" aria-hidden="true">FUCO<em>Estudio</em></div>
   <div class="ftr__base wrap">

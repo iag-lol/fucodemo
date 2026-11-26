@@ -1,6 +1,6 @@
 import { layout } from './layout.mjs';
-import { ctx, esc, img, src, icons, bySlug } from './helpers.mjs';
-import { pageHead } from './components.mjs';
+import { ctx, esc, img, src, icons, bySlug, STATIC } from './helpers.mjs';
+import { pageHead, handOffDone } from './components.mjs';
 import { services, faqs } from '../data/content.mjs';
 import { site } from '../data/site.mjs';
 
@@ -31,7 +31,9 @@ export function contactPage(lang) {
   const c = ctx(lang);
   const { t, url } = c;
   const body = `
-${pageHead(t('Contacto', 'Contact'), t('Cuéntanos <em>tu idea</em>', 'Tell us <em>your idea</em>'), t('Escríbenos y te respondemos por correo. Si prefieres detallar servicios y fecha, usa el cotizador.', 'Write to us and we will reply by email. To detail services and date, use the quote builder.'))}
+${pageHead(t('Contacto', 'Contact'), t('Cuéntanos <em>tu idea</em>', 'Tell us <em>your idea</em>'), STATIC
+  ? t('Escribe tu mensaje y envíalo por WhatsApp o correo. Si prefieres detallar servicios y fecha, usa el cotizador.', 'Write your message and send it by WhatsApp or email. To detail services and date, use the quote builder.')
+  : t('Escríbenos y te respondemos por correo. Si prefieres detallar servicios y fecha, usa el cotizador.', 'Write to us and we will reply by email. To detail services and date, use the quote builder.'))}
 <section class="contact wrap">
   <form class="form" data-lead-form="contacto" novalidate>
     <div class="field"><input id="f-name" name="name" required autocomplete="name" placeholder=" " maxlength="100"><label for="f-name">${t('Nombre', 'Name')} *</label></div>
@@ -42,9 +44,9 @@ ${pageHead(t('Contacto', 'Contact'), t('Cuéntanos <em>tu idea</em>', 'Tell us <
     <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <label class="check field--full"><input type="checkbox" name="consent" required> <span>${t('Acepto que FUCO use estos datos para responderme.', 'I agree FUCO may use these details to reply to me.')} <a href="${url('/privacidad/')}">${t('Privacidad', 'Privacy')}</a></span></label>
     <p class="form__error field--full" role="alert" hidden></p>
-    <button class="btn btn--solid field--full" type="submit">${t('Enviar mensaje', 'Send message')} ${icons.arrow}</button>
+    <button class="btn btn--solid field--full" type="submit">${STATIC ? t('Continuar', 'Continue') : t('Enviar mensaje', 'Send message')} ${icons.arrow}</button>
   </form>
-  <div class="form__done" data-done hidden><i>✓</i><h2>${t('Mensaje recibido', 'Message received')}</h2><p>${t('Gracias. Tu número de referencia es', 'Thank you. Your reference number is')} <b data-ref></b>.</p><a class="btn" href="${url('/proyectos/')}">${t('Seguir mirando proyectos', 'Keep browsing')}</a></div>
+  ${STATIC ? handOffDone(c) : `<div class="form__done" data-done hidden><i>✓</i><h2>${t('Mensaje recibido', 'Message received')}</h2><p>${t('Gracias. Tu número de referencia es', 'Thank you. Your reference number is')} <b data-ref></b>.</p><a class="btn" href="${url('/proyectos/')}">${t('Seguir mirando proyectos', 'Keep browsing')}</a></div>`}
   <aside class="contact__aside">
     <a class="cardlink" href="https://wa.me/${site.whatsapp}" target="_blank" rel="noopener">${icons.whatsapp}<span><small>WhatsApp</small>${site.team[0].phone}</span></a>
     <button type="button" class="cardlink" data-copy="${site.email}"><b>@</b><span><small>${t('Correo (clic para copiar)', 'Email (click to copy)')}</small>${site.email}</span></button>
@@ -60,9 +62,11 @@ export function privacyPage(lang) {
   const c = ctx(lang);
   const { t } = c;
   const sections = [
-    [t('Qué datos recibimos', 'What we collect'), t('Los que escribes en los formularios: nombre, correo, teléfono, empresa, detalles del proyecto y, en las galerías privadas, tus fotos favoritas y comentarios.', 'What you type in our forms: name, email, phone, company, project details and, in private galleries, your favourite photos and comments.')],
+    [t('Qué datos recibimos', 'What we collect'), STATIC
+      ? t('Este sitio no guarda lo que escribes en los formularios: prepara un mensaje que tú decides enviar por WhatsApp o correo. Al enviarlo recibimos los datos que incluya.', 'This site does not store what you type in the forms: it prepares a message that you choose to send by WhatsApp or email. When you send it, we receive the details it contains.')
+      : t('Los que escribes en los formularios: nombre, correo, teléfono, empresa, detalles del proyecto y, en las galerías privadas, tus fotos favoritas y comentarios.', 'What you type in our forms: name, email, phone, company, project details and, in private galleries, your favourite photos and comments.')],
     [t('Para qué los usamos', 'How we use them'), t('Únicamente para responder tu solicitud, preparar propuestas y entregar tu material. No los vendemos.', 'Only to answer your request, prepare proposals and deliver your files. We do not sell them.')],
-    [t('Cookies y almacenamiento', 'Cookies and storage'), t('Este sitio no usa cookies de publicidad ni analítica. Guarda en tu navegador preferencias como tu moodboard. El panel interno usa una cookie de sesión.', 'This site uses no advertising or analytics cookies. It keeps preferences such as your moodboard in your browser. The internal panel uses a session cookie.')],
+    [t('Cookies y almacenamiento', 'Cookies and storage'), t('Este sitio no usa cookies de publicidad ni analítica. Guarda en tu navegador preferencias como tu moodboard.', 'This site uses no advertising or analytics cookies. It keeps preferences such as your moodboard in your browser.') + (STATIC ? '' : t(' El panel interno usa una cookie de sesión.', ' The internal panel uses a session cookie.'))],
     [t('Tus derechos', 'Your rights'), `${t('Puedes pedir acceso, corrección o eliminación de tus datos escribiendo a', 'You can ask to access, correct or delete your data by writing to')} <a href="mailto:${site.email}">${site.email}</a>.`],
   ];
   const body = `${pageHead('Legal', t('Privacidad', 'Privacy'))}<section class="prose wrap">${sections.map(([h, p]) => `<h2>${h}</h2><p>${p}</p>`).join('')}</section>`;

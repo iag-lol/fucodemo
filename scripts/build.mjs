@@ -6,7 +6,10 @@ import { join, dirname } from 'node:path';
 const ROOT = new URL('..', import.meta.url).pathname;
 const DIST = join(ROOT, 'dist');
 const p = (...a) => join(ROOT, ...a);
-const out = (file, content) => { const f = join(DIST, file); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, content); };
+const out = (file, content) => { const f = join(DIST, file); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, /\.(html|css|json)$/.test(file) ? rebase(content) : content); };
+
+// Direcciones del sitio anterior
+const REDIRECTS = [['/about', '/nosotros/'], ['/estudio/', '/nosotros/'], ['/en/estudio/', '/en/nosotros/'], ['/clients', '/proyectos/'], ['/contact', '/contacto/']];
 
 if (!existsSync(p('src/data/media.json')) || !existsSync(p('public/media/img'))) {
   console.error('Falta el material optimizado. Ejecuta primero: npm run assets');
@@ -19,7 +22,16 @@ const { servicesPage, contactPage, privacyPage, notFoundPage } = await import('.
 const { aboutPage } = await import('../src/templates/about.mjs');
 const { pendingCount } = await import('../src/data/nosotros.mjs');
 const { archivePage, labPage, quotePage, clientPage, adminPage } = await import('../src/templates/tools.mjs');
-const { resolvedProjects, ctx, src, media } = await import('../src/templates/helpers.mjs');
+const { resolvedProjects, ctx, src, media, BASE, STATIC } = await import('../src/templates/helpers.mjs');
+
+// En una subcarpeta (BASE_PATH) las rutas que empiezan en «/» se anteponen con ella.
+const ROOTS = 'media|data|css|js|vendor|fonts|en|proyectos|servicios|nosotros|archivo|lab|cotizar|contacto|privacidad|clientes|404|manifest\\.webmanifest';
+function rebase(text) {
+  if (!BASE) return text;
+  return String(text)
+    .replace(new RegExp(`(["'(]|, |&quot;)/(?=(?:${ROOTS})(?:[/?#"')]|$))`, 'g'), `$1${BASE}/`)
+    .replace(/((?:href|content)=")\/(?=["?#])/g, `$1${BASE}/`); // enlaces a la portada
+}
 const { categories } = await import('../src/data/projects.mjs');
 const { services } = await import('../src/data/content.mjs');
 const { site } = await import('../src/data/site.mjs');
@@ -70,7 +82,7 @@ for (const lang of ['es', 'en']) {
     ['privacidad/', privacyPage(lang)], ...resolvedProjects.map((pr) => [`proyectos/${pr.slug}/`, projectPage(lang, pr)]),
   ];
   for (const [path, html] of list) { add(path, html); paths.push(`/${base}${path}`); }
-  add('clientes/', clientPage(lang));
+  if (!STATIC) add('clientes/', clientPage(lang));
   page(`${base}404.html`, notFoundPage(lang));
 
   // Datos para el buscador, showreel, archivo y cotizador
@@ -87,17 +99,24 @@ for (const lang of ['es', 'en']) {
   };
   out(`data/site.${lang}.json`, JSON.stringify(data));
 }
-page('admin/index.html', adminPage());
+if (!STATIC) page('admin/index.html', adminPage());
 
 out('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${paths.map((u) => `<url><loc>${site.url}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 out('robots.txt', `User-agent: *\nDisallow: /admin/\nDisallow: /api/\nSitemap: ${site.url}/sitemap.xml\n`);
 out('manifest.webmanifest', JSON.stringify({
-  name: site.name, short_name: site.short, start_url: '/', display: 'standalone', background_color: '#0a0a0b', theme_color: '#0a0a0b', lang: 'es-CL',
-  icons: [192, 512].map((s) => ({ src: `/media/brand/icon-${s}.png`, sizes: `${s}x${s}`, type: 'image/png' })),
+  name: site.name, short_name: site.short, start_url: `${BASE}/`, display: 'standalone', background_color: '#0a0a0b', theme_color: '#0a0a0b', lang: 'es-CL',
+  icons: [192, 512].map((s) => ({ src: `${BASE}/media/brand/icon-${s}.png`, sizes: `${s}x${s}`, type: 'image/png' })),
 }));
 page('sw.js', readFileSync(p('src/sw.js'), 'utf8'));
 // Redirecciones desde las direcciones del sitio anterior (formato Netlify/Cloudflare Pages)
-out('_redirects', '/about /nosotros/ 301\n/estudio/ /nosotros/ 301\n/en/estudio/ /en/nosotros/ 301\n/clients /proyectos/ 301\n/contact /contacto/ 301\n');
+out('_redirects', REDIRECTS.map(([from, to]) => `${from} ${to} 301\n`).join(''));
+// Sin servidor propio, cada dirección antigua es una página que salta a la nueva.
+if (STATIC) {
+  for (const [from, to] of REDIRECTS) {
+    out(`${from.replace(/^\/|\/$/g, '')}/index.html`, `<!doctype html><html lang="es"><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=${BASE}${to}"><title>FUCO Estudio</title><a href="${to}">${site.url}${to}</a></html>\n`);
+  }
+  out('.nojekyll', '');
+}
 
-console.log(`Sitio generado en dist/ — ${paths.length} páginas públicas (versión ${VERSION})`);
+console.log(`Sitio generado en dist/ — ${paths.length} páginas públicas (versión ${VERSION})${STATIC ? ` · modo estático${BASE ? ` en ${BASE}/` : ''}` : ''}`);
 if (pendingCount()) console.log(`Aviso: la página «Nosotros» tiene ${pendingCount()} datos por confirmar o completar (src/data/nosotros.mjs).`);

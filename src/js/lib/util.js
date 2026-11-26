@@ -2,7 +2,10 @@ export const $ = (s, root = document) => root.querySelector(s);
 export const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 export const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
 export const t = (es, en) => (lang === 'en' ? en : es);
-export const url = (path) => (lang === 'en' ? `/en${path}` : path);
+/** Carpeta raíz del sitio, deducida de la ubicación de este archivo (sirve también en una subcarpeta). */
+export const base = new URL('../..', import.meta.url).pathname.replace(/\/$/, '');
+export const isStatic = document.documentElement.hasAttribute('data-static');
+export const url = (path) => base + (lang === 'en' ? `/en${path}` : path);
 export const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 export const saveData = !!navigator.connection?.saveData;
@@ -45,7 +48,7 @@ export async function copy(text, ok = t('Copiado', 'Copied')) {
 }
 
 let dataPromise;
-export const siteData = () => (dataPromise ??= fetch(`/data/site.${lang}.json`).then((r) => r.json()));
+export const siteData = () => (dataPromise ??= fetch(`${base}/data/site.${lang}.json`).then((r) => r.json()));
 
 export async function api(path, { method = 'GET', body, raw } = {}) {
   const res = await fetch(path, {

@@ -1,6 +1,6 @@
 // Cotizador por pasos con calendario de disponibilidad y resumen en vivo.
-import { $, $$, el, t, lang, api, siteData, clamp, scroll } from './lib/util.js';
-import { validate, showError, sendLead } from './lib/forms.js';
+import { $, $$, el, t, lang, api, siteData, clamp, scroll, isStatic } from './lib/util.js';
+import { validate, showError, sendLead, finish } from './lib/forms.js';
 import { mood } from './lib/mood.js';
 
 const root = $('[data-quote]');
@@ -165,15 +165,16 @@ form.addEventListener('submit', async (e) => {
         location: val('location'), date: form.elements.flexible.checked ? '' : date, budget: labels('budget'),
         estimate: price ? `$${price.toLocaleString('es-CL')} CLP` : '', references: references().map((m) => `${m.title} (${m.href})`),
       },
-    });
-    try { sessionStorage.removeItem(DRAFT); } catch { /* sin almacenamiento */ }
+    }, [...summaryRows(), [t('Referencias', 'References'), references().map((m) => `\n• ${m.title}: ${new URL(m.href, location.origin)}`).join('')]]);
     const done = $('[data-done]', root);
-    form.hidden = $('.slate', root).hidden = true;
-    done.hidden = false;
-    $('[data-ref]', done).textContent = res.ref;
-    $('[data-ref-email]', done).textContent = val('email');
+    if (res) {
+      // El borrador solo se borra cuando la solicitud quedó recibida.
+      try { sessionStorage.removeItem(DRAFT); } catch { /* sin almacenamiento */ }
+      $('[data-ref]', done).textContent = res.ref;
+      $('[data-ref-email]', done).textContent = val('email');
+    }
+    finish(done, [form, $('.slate', root)]);
     scroll.lenis?.resize();
-    done.scrollIntoView({ block: 'center' });
   } catch (err) {
     showError(error, err.message);
   } finally {
@@ -194,9 +195,12 @@ document.addEventListener('mood:change', update);
 renderCalendar();
 show(0, false);
 update();
-api('/api/availability').then((r) => {
-  blocked = new Set(r.blocked);
-  if (blocked.has(date)) date = '';
-  renderCalendar(); update();
-}).catch(() => {});
-api('/api/config').then((r) => { config = r; update(); }).catch(() => {});
+// En el sitio estático no hay servidor que informe fechas ocupadas ni tarifas.
+if (!isStatic) {
+  api('/api/availability').then((r) => {
+    blocked = new Set(r.blocked);
+    if (blocked.has(date)) date = '';
+    renderCalendar(); update();
+  }).catch(() => {});
+  api('/api/config').then((r) => { config = r; update(); }).catch(() => {});
+}

@@ -1,4 +1,4 @@
-import { el, $, t, url, overlay, siteData, copy } from './util.js';
+import { el, $, t, url, overlay, siteData, copy, isStatic } from './util.js';
 import { openReel } from './reel.js';
 import { openMood } from './mood.js';
 
@@ -16,7 +16,7 @@ export async function openPalette() {
     page(t('Cotizar un proyecto', 'Get a quote'), '/cotizar/', '✦'),
     page(t('Proyectos', 'Work'), '/proyectos/'), page(t('Servicios', 'Services'), '/servicios/'), page(t('Nosotros', 'About'), '/nosotros/'),
     page(t('Archivo visual', 'Visual archive'), '/archivo/'), page(t('Laboratorio de color', 'Colour lab'), '/lab/'), page(t('Contacto', 'Contact'), '/contacto/'),
-    page(t('Acceso clientes', 'Client access'), '/clientes/', '⚿'),
+    ...(isStatic ? [] : [page(t('Acceso clientes', 'Client access'), '/clientes/', '⚿')]),
     action(t('Abrir mi moodboard', 'Open my moodboard'), '♥', openMood),
     action(t('Copiar correo', 'Copy email'), '@', () => copy(data.contact.email)),
     action('WhatsApp', '✆', () => window.open(`https://wa.me/${data.contact.whatsapp}`, '_blank', 'noopener')),
